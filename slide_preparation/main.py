@@ -1,6 +1,5 @@
 '''
-ESC204 2023S Lab 2 Task C
-Task: Blink an external LED.
+ESC204 2023S 
 '''
 # Import libraries needed for blinking the LED
 import board
