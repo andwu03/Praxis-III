@@ -40,6 +40,7 @@ fan_port = board.GP2
 # CONSTANTS
 slide_dry_time = 30
 giemsa_input_time = 30
+staining_time = 8*60
 giemsa_drain_time = 30
 water_input_time = 30
 water_drain_time = 30
@@ -79,6 +80,11 @@ button.pull = digitalio.Pull.UP # Set the internal resistor to pull-up, meaning 
 fan = digitalio.DigitalInOut(fan_port) # red
 fan.direction = digitalio.Direction.OUTPUT
 
+def if_pressed(buttonvalue):
+    if (buttonvalue == False):
+        return True
+    return False
+
 #--------------------------------------------------#
 
 # Print a message on the serial console
@@ -88,6 +94,8 @@ second_press = False
 
 # Loop so the code runs continuosly
 while True: 
+    ledGreen = False
+    ledRed = False
     # Listen for button press
     while(button.value == True):
         continue
@@ -103,7 +111,62 @@ while True:
     # Turn red LED on to indicate that cycle is in progress
     ledRed.value = True
     
+    # Turn fan on and off
+    start = time.time()
+    while (time.time() - start < slide_dry_time):
+        fan.value = True
+    fan.value = False
 
+    # Open valve to Giemsa
+    # 0 − 180 degrees, 5 degrees at a time.
+    for angle in range(0, 180, 5):
+        servo_giemsa.angle = angle
+        time.sleep(0.05)
+
+    # Wait to fill compartment
+    time.sleep(giemsa_input_time)
+
+    # Close valve to Giemsa
+    # 180 − 0 degrees, 5 degrees at a time.
+    for angle in range(180, 0, -5):
+        servo_giemsa.angle = angle 
+        time.sleep(0.05)
+
+    # Stain
+    time.sleep(staining_time)
+
+    # Open drain valve
+    for angle in range(0, 180, 5):
+        servo_drain.angle = angle
+        time.sleep(0.05)
+
+    # Open water valve
+    for angle in range(0, 180, 5):
+        servo_water.angle = angle
+        time.sleep(0.05)
+
+    # Flush
+    time.sleep(water_input_time)
+
+    # Close valve to water
+    for angle in range(180, 0, -5):
+        servo_water.angle = angle 
+        time.sleep(0.05)
+
+    # Turn fan on and off to dry after flushing
+    start = time.time()
+    while (time.time() - start < final_dry_time):
+        fan.value = True
+    fan.value = False
+
+    # Close drain valve
+    for angle in range(180, 0, -5):
+        servo_drain.angle = angle 
+        time.sleep(0.05)
+
+    # Turn red LED off and green LED on to indicate that cycle is complete
+    ledRed.value = False
+    ledGreen.value = True
 
 
 
