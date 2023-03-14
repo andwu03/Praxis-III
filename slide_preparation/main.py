@@ -168,7 +168,9 @@ while True:
     ledRed.value = False
     ledGreen.value = True
 
-
+    # Wait 5 seconds and turn green LED off
+    time.sleep(5)
+    ledGreen.value = False
 
 
 
