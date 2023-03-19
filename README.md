@@ -1,6 +1,6 @@
 # Praxis-III: Microscope Slide Processing Pipeline
 ## Repository for Praxis III Project
-This repository contains code for Team 0101A, working on the *Making Healthcare Accessible* opportunity for ESC203, Winter 2023.
+This repository contains code for Team 0101A, working on the *Making Healthcare Accessible* opportunity for ESC204, Winter 2023.
 
 ## Code Organization
 Code it split into the three folders, representative of the three aspects of the design:
