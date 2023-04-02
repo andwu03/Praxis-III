@@ -1,3 +1,4 @@
+
 '''
 ESC204 2023S 
 '''
@@ -22,25 +23,22 @@ import board
 import digitalio
 import time
 import pwmio
-from adafruit motor import servo
+from adafruit_motor import servo
 
 # PORTS
-red_led_port = board.GP1
-green_led_port = board.GP1
+red_led_port = board.GP15
+green_led_port = board.GP14
 
-pwm_giemsa_port = board.GP1
-pwm_water_port = board.GP1
-pwm_alcohol_port = board.GP1
-pwm_drain_port = board.GP1
+pwm_input_port = board.GP16
+pwm_output_port = board.GP17
 
-button_port = board.GP1
-
-fan_port = board.GP2
+# button_port = board.GP1
+fan_port = board.GP13
 
 # CONSTANTS
 slide_dry_time = 30
 giemsa_input_time = 30
-staining_time = 8*60
+staining_time = 10 # 8*60
 giemsa_drain_time = 30
 water_input_time = 30
 water_drain_time = 30
@@ -55,26 +53,18 @@ ledRed.direction = digitalio.Direction.OUTPUT
 ledGreen = digitalio.DigitalInOut(green_led_port) # red
 ledGreen.direction = digitalio.Direction.OUTPUT
 
-# MICROSERVO GIEMSA
-pwm_giemsa = pwmio.PWMOut(pwm_giemsa_port, duty_cycle=2**15, frequency=50)
-servo_giemsa = servo.Servo(pwm_giemsa)
+# SERVO INPUT
+pwm_input = pwmio.PWMOut(pwm_input_port, duty_cycle=2**15, frequency=50)
+servo_input = servo.Servo(pwm_input)
 
-# MICROSERVO WATER
-pwm_water = pwmio.PWMOut(pwm_water_port, duty_cycle=2**15, frequency=50)
-servo_water = servo.Servo(pwm_water)
-
-# MICROSERVO ALCOHOL
-pwm_alcohol = pwmio.PWMOut(pwm_alcohol_port, duty_cycle=2**15, frequency=50)
-servo_alcohol = servo.Servo(pwm_alcohol)
-
-# MICROSERVO DRAIN
-pwm_drain = pwmio.PWMOut(pwm_drain_port, duty_cycle=2**15, frequency=50)
-servo_drain = servo.Servo(pwm_drain)
+# SERVO INPUT
+pwm_output = pwmio.PWMOut(pwm_output_port, duty_cycle=2**15, frequency=50)
+servo_output = servo.Servo(pwm_output)
 
 # BUTTON
-button = digitalio.DigitalInOut(button_port)
-button.direction = digitalio.Direction.INPUT
-button.pull = digitalio.Pull.UP # Set the internal resistor to pull-up, meaning True and False will be flipped
+#button = digitalio.DigitalInOut(button_port)
+#button.direction = digitalio.Direction.INPUT
+#button.pull = digitalio.Pull.UP # Set the internal resistor to pull-up, meaning True and False will be flipped
 
 # FAN
 fan = digitalio.DigitalInOut(fan_port) # red
@@ -88,21 +78,38 @@ def if_pressed(buttonvalue):
 #--------------------------------------------------#
 
 # Print a message on the serial console
-print('READY')
+# print('READY')
 
 second_press = False
 
+'''
+while True:
+    # 0 - 180 degrees, 5 degrees at a time.
+    print('Rotating to 180')
+    for angle in range(0, 180, 5):
+        servo_input.angle = angle
+        time.sleep(0.05)
+    # 180 - 0 degrees, 5 degrees at a time.
+    print('Rotating to 0')
+    for angle in range(180, 0, -5):
+        servo_input.angle = angle
+        time.sleep(0.05)
+'''
+        
 # Loop so the code runs continuosly
+led_start = time.time()
+fan_start = led_start + 5
+fan2_start = fan_start + slide_dry_time + 0.25 + giemsa_input_time + 0.25 + staining_time + 0.25 + 0.25 + water_input_time + 0.25
+
 while True: 
-    ledGreen = False
-    ledRed = False
+    ledGreen.value = True
+    ledRed.value = True
     # Listen for button press
-    while(button.value == True):
-        continue
+    # while(button.value == True):
+        # continue
 
     # Blink red LED for 5 seconds to indicate that cycle will start soon
-    start = time.time()
-    while(time.time() - start < 5):
+    while(time.time() - led_start < 5):
         ledRed.value = True
         time.sleep(0.5)
         ledRed.value = False
@@ -110,26 +117,26 @@ while True:
     
     # Turn red LED on to indicate that cycle is in progress
     ledRed.value = True
-    
+       
     # Turn fan on and off
-    start = time.time()
-    while (time.time() - start < slide_dry_time):
+    while (time.time() - fan_start < slide_dry_time):
         fan.value = True
     fan.value = False
 
     # Open valve to Giemsa
     # 0 − 180 degrees, 5 degrees at a time.
+    print('Rotating to 180')
     for angle in range(0, 180, 5):
-        servo_giemsa.angle = angle
+        servo_input.angle = angle
         time.sleep(0.05)
-
+    
     # Wait to fill compartment
     time.sleep(giemsa_input_time)
-
+    
     # Close valve to Giemsa
     # 180 − 0 degrees, 5 degrees at a time.
     for angle in range(180, 0, -5):
-        servo_giemsa.angle = angle 
+        servo_input.angle = angle 
         time.sleep(0.05)
 
     # Stain
@@ -137,12 +144,12 @@ while True:
 
     # Open drain valve
     for angle in range(0, 180, 5):
-        servo_drain.angle = angle
+        servo_output.angle = angle
         time.sleep(0.05)
 
     # Open water valve
     for angle in range(0, 180, 5):
-        servo_water.angle = angle
+        servo_input.angle = angle
         time.sleep(0.05)
 
     # Flush
@@ -150,18 +157,17 @@ while True:
 
     # Close valve to water
     for angle in range(180, 0, -5):
-        servo_water.angle = angle 
+        servo_input.angle = angle 
         time.sleep(0.05)
 
     # Turn fan on and off to dry after flushing
-    start = time.time()
-    while (time.time() - start < final_dry_time):
+    while (time.time() - fan2_start < final_dry_time):
         fan.value = True
     fan.value = False
 
     # Close drain valve
     for angle in range(180, 0, -5):
-        servo_drain.angle = angle 
+        servo_output.angle = angle 
         time.sleep(0.05)
 
     # Turn red LED off and green LED on to indicate that cycle is complete
@@ -172,6 +178,7 @@ while True:
     time.sleep(5)
     ledGreen.value = False
 
+    break
 
 
 
@@ -231,3 +238,4 @@ while True:
 # for angle in range(180, 0, −5):
 # my servo.angle = angle
 # time.sleep(0.05)
+
