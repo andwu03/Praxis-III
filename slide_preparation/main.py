@@ -32,7 +32,7 @@ green_led_port = board.GP14
 pwm_input_port = board.GP16
 pwm_output_port = board.GP17
 
-# button_port = board.GP1
+button_port = board.GP12
 fan_port = board.GP13
 
 # CONSTANTS
@@ -62,9 +62,9 @@ pwm_output = pwmio.PWMOut(pwm_output_port, duty_cycle=2**15, frequency=50)
 servo_output = servo.Servo(pwm_output)
 
 # BUTTON
-#button = digitalio.DigitalInOut(button_port)
-#button.direction = digitalio.Direction.INPUT
-#button.pull = digitalio.Pull.UP # Set the internal resistor to pull-up, meaning True and False will be flipped
+button = digitalio.DigitalInOut(button_port)
+button.direction = digitalio.Direction.INPUT
+button.pull = digitalio.Pull.UP # Set the internal resistor to pull-up, meaning True and False will be flipped
 
 # FAN
 fan = digitalio.DigitalInOut(fan_port) # red
@@ -81,32 +81,19 @@ def if_pressed(buttonvalue):
 # print('READY')
 
 second_press = False
-
-'''
-while True:
-    # 0 - 180 degrees, 5 degrees at a time.
-    print('Rotating to 180')
-    for angle in range(0, 180, 5):
-        servo_input.angle = angle
-        time.sleep(0.05)
-    # 180 - 0 degrees, 5 degrees at a time.
-    print('Rotating to 0')
-    for angle in range(180, 0, -5):
-        servo_input.angle = angle
-        time.sleep(0.05)
-'''
         
 # Loop so the code runs continuosly
-led_start = time.time()
-fan_start = led_start + 5
-fan2_start = fan_start + slide_dry_time + 0.25 + giemsa_input_time + 0.25 + staining_time + 0.25 + 0.25 + water_input_time + 0.25
 
 while True: 
-    ledGreen.value = True
-    ledRed.value = True
+    ledGreen.value = False
+    ledRed.value = False
     # Listen for button press
-    # while(button.value == True):
-        # continue
+    while(button.value == True):
+        led_start = time.time()
+        continue
+
+    fan_start = led_start + 5
+    fan2_start = fan_start + slide_dry_time + 0.25 + giemsa_input_time + 0.25 + staining_time + 0.25 + 0.25 + water_input_time + 0.25
 
     # Blink red LED for 5 seconds to indicate that cycle will start soon
     while(time.time() - led_start < 5):
