@@ -89,12 +89,9 @@ while True:
     ledRed.value = False
     # Listen for button press
     while(button.value == True):
-        led_start = time.time()
         continue
 
-    fan_start = led_start + 5
-    fan2_start = fan_start + slide_dry_time + 0.25 + giemsa_input_time + 0.25 + staining_time + 0.25 + 0.25 + water_input_time + 0.25
-
+    led_start = time.time()
     # Blink red LED for 5 seconds to indicate that cycle will start soon
     while(time.time() - led_start < 5):
         ledRed.value = True
@@ -105,8 +102,9 @@ while True:
     # Turn red LED on to indicate that cycle is in progress
     ledRed.value = True
        
-    # Turn fan on and off
-    while (time.time() - fan_start < slide_dry_time):
+    fan1_start = time.time()
+    # Turn fan on and off - good
+    while (time.time() - fan1_start < slide_dry_time):
         fan.value = True
     fan.value = False
 
@@ -147,6 +145,7 @@ while True:
         servo_input.angle = angle 
         time.sleep(0.05)
 
+    fan2_start = time.time()
     # Turn fan on and off to dry after flushing
     while (time.time() - fan2_start < final_dry_time):
         fan.value = True
@@ -164,65 +163,3 @@ while True:
     # Wait 5 seconds and turn green LED off
     time.sleep(5)
     ledGreen.value = False
-
-    break
-
-
-
-# state = 2
-# timer = 0
-# led1.value = False
-# led2.value = False
-# led3.value = False
-
-# # Loop so the code runs continuously
-# while True:
-#     if (button.value == False):
-#         start = time.time()
-#         while (button.value == False):
-#             timer = time.time() - start # time elapsed
-#             if (timer >= 2):
-#                 state = 2
-#                 timer = 0
-#                 break
-#             elif (button.value == True):
-#                 timer = 0
-#                 state = (state + 1)%2
-#                 break
-            
-#         print(state)
-        
-#         if (state == 0): # for plants
-#             led1.value = True
-#             led2.value = True
-#             led3.value = False
-#         elif (state == 1): # for humans
-#             led1.value = True
-#             led2.value = True
-#             led3.value = True
-#         elif (state == 2): # for off
-#             led1.value = False
-#             led2.value = False
-#             led3.value = False
-#             time.sleep(2)
-
-# """CircuitPython Essentials Servo standard servo example"""
-
-
-# # create a PWMOut object on Pin A2.
-# pwm = pwmio.PWMOut(board.GP16, duty cycle=2 ∗∗ 15, frequency=50)
-# # Create a servo object, my servo.
-# my servo = servo.Servo(pwm)
-
-# while True:
-# # 0 − 180 degrees, 5 degrees at a time.
-# print(’Rotating to 180’)
-# for angle in range(0, 180, 5):
-# my servo.angle = angle
-# time.sleep(0.05)
-# # 180 − 0 degrees, 5 degrees at a time.
-# print(’Rotating to 0’)
-# for angle in range(180, 0, −5):
-# my servo.angle = angle
-# time.sleep(0.05)
-
