@@ -112,38 +112,48 @@ while True:
     # 0 − 180 degrees, 5 degrees at a time.
     print('Rotating to 180')
     for angle in range(0, 180, 5):
+        ledGreen.value = True
         servo_input.angle = angle
         time.sleep(0.05)
-    
+    ledGreen.value = False
+
     # Wait to fill compartment
     time.sleep(giemsa_input_time)
     
     # Close valve to Giemsa
     # 180 − 0 degrees, 5 degrees at a time.
     for angle in range(180, 0, -5):
+        ledGreen.value = True
         servo_input.angle = angle 
         time.sleep(0.05)
+    ledGreen.value = False
 
     # Stain
     time.sleep(staining_time)
 
     # Open drain valve
     for angle in range(0, 180, 5):
+        ledGreen.value = True
         servo_output.angle = angle
         time.sleep(0.05)
+    ledGreen.value = False
 
     # Open water valve
     for angle in range(0, 180, 5):
+        ledGreen.value = True
         servo_input.angle = angle
         time.sleep(0.05)
+    ledGreen.value = False
 
     # Flush
     time.sleep(water_input_time)
 
     # Close valve to water
     for angle in range(180, 0, -5):
+        ledGreen.value = True
         servo_input.angle = angle 
         time.sleep(0.05)
+    ledGreen.value = False
 
     fan2_start = time.time()
     # Turn fan on and off to dry after flushing
@@ -153,8 +163,12 @@ while True:
 
     # Close drain valve
     for angle in range(180, 0, -5):
+        ledGreen.value = True
         servo_output.angle = angle 
         time.sleep(0.05)
+    ledGreen.value = False
+
+    time.sleep(5)
 
     # Turn red LED off and green LED on to indicate that cycle is complete
     ledRed.value = False
