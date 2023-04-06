@@ -1,8 +1,3 @@
-'''
-ESC204 2023S 
-'''
-# PROCESS
-
 import time
 
 # load the CircuitPython hardware definition module for pin definitions
