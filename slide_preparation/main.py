@@ -97,3 +97,115 @@ while True:
         time.sleep(0.5)
         ledRed.value = False
         time.sleep(0.5)
+
+    # Turn red LED on to indicate that cycle is in progress
+    ledRed.value = True
+
+    fan1_start = time.time()
+    # Turn fan on and off - good
+    while (time.time() - fan1_start < slide_dry_time):
+        fan.value = True
+    fan.value = False
+
+    # Open valve to Giemsa
+    # 0 − 180 degrees, 5 degrees at a time.
+    print('Rotating to 180')
+    for angle in range(0, 180, 5):
+        ledGreen.value = True
+        servo_input.angle = angle
+        time.sleep(0.05)
+    #turn off input (1)
+    pwm_input.duty_cycle = 0
+
+    ledGreen.value = False
+
+
+    # Wait to fill compartment
+    time.sleep(giemsa_input_time)
+
+    pwm_input.duty_cycle = 2**15
+    time.sleep(0.1)
+    # Close valve to Giemsa
+    # 180 − 0 degrees, 5 degrees at a time.
+    for angle in range(180, 0, -5):
+        ledGreen.value = True
+        servo_input.angle = angle
+        time.sleep(0.05)
+
+    #turn off input (2)
+    pwm_input.duty_cycle = 0
+    ledGreen.value = False
+
+    # Stain
+    time.sleep(staining_time)
+
+
+    # Open drain valve
+    for angle in range(0, 180, 5):
+        ledGreen.value = True
+        servo_output.angle = angle
+        time.sleep(0.05)
+    #turn off output servo (1)
+    pwm_output.duty_cycle = 0
+    ledGreen.value = False
+
+    # Open water valve
+    #turn on input (2)
+
+    pwm_input.duty_cycle = 2**15
+    time.sleep(0.1)
+    for angle in range(0, 180, 5):
+        ledGreen.value = True
+        servo_input.angle = angle
+        time.sleep(0.05)
+    #turn off input (3)
+    pwm_input.duty_cycle = 0
+    ledGreen.value = False
+
+
+    # Flush
+    time.sleep(water_input_time)
+
+    # Close valve to water
+    #turn on input (3)
+
+    pwm_input.duty_cycle = 2**15
+    time.sleep(0.1)
+    for angle in range(180, 0, -5):
+        ledGreen.value = True
+        servo_input.angle = angle
+        time.sleep(0.05)
+    #turn off input (4)
+    pwm_input.duty_cycle = 0
+    ledGreen.value = False
+
+    fan2_start = time.time()
+    # Turn fan on and off to dry after flushing
+    while (time.time() - fan2_start < final_dry_time):
+        fan.value = True
+    fan.value = False
+
+    # Close drain valve
+
+    #turn on output (1)
+
+    pwm_output.duty_cycle = 2**15
+    time.sleep(0.1)
+
+    for angle in range(180, 0, -5):
+        ledGreen.value = True
+        servo_output.angle = angle
+        time.sleep(0.05)
+    #turn off output (2)
+    pwm_output.duty_cycle = 0
+    ledGreen.value = False
+
+    time.sleep(5)
+
+    # Turn red LED off and green LED on to indicate that cycle is complete
+    ledRed.value = False
+    ledGreen.value = True
+
+    # Wait 5 seconds and turn green LED off
+    time.sleep(5)
+    ledGreen.value = False
