@@ -1,2 +1,2 @@
 # DATASET PATH
-Put dataset images into this folder directly (do not put them in another subfolder).
+Put dataset images into folder called "images" (do not put them in another subfolder).
