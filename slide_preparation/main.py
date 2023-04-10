@@ -85,12 +85,18 @@ second_press = False
 
 while True:
     ledGreen.value = False
-    ledRed.value = False
+    ledRed.value = True
+
+    #close both valves
+    servo_input.angle = 0
+    servo_output.angle = 110
+
     # Listen for button press
     while(button.value == True):
         continue
 
     led_start = time.time()
+
     # Blink red LED for 5 seconds to indicate that cycle will start soon
     while(time.time() - led_start < 5):
         ledRed.value = True
@@ -108,13 +114,10 @@ while True:
     fan.value = False
 
     # Open valve to Giemsa
-    # 0 − 180 degrees, 5 degrees at a time.
-    print('Rotating to 180')
-    for angle in range(0, 180, 5):
-        ledGreen.value = True
-        servo_input.angle = angle
-        time.sleep(0.05)
-    #turn off input (1)
+    print('Rotating to 155')
+    servo_input.angle = 155
+    time.sleep (1)
+
     pwm_input.duty_cycle = 0
 
     ledGreen.value = False
@@ -126,14 +129,11 @@ while True:
     pwm_input.duty_cycle = 2**15
     time.sleep(0.1)
     # Close valve to Giemsa
-    # 180 − 0 degrees, 5 degrees at a time.
-    for angle in range(180, 0, -5):
-        ledGreen.value = True
-        servo_input.angle = angle
-        time.sleep(0.05)
-
-    #turn off input (2)
+    servo_input.angle = 0
+    time.sleep (1)
     pwm_input.duty_cycle = 0
+
+
     ledGreen.value = False
 
     # Stain
@@ -141,10 +141,8 @@ while True:
 
 
     # Open drain valve
-    for angle in range(0, 180, 5):
-        ledGreen.value = True
-        servo_output.angle = angle
-        time.sleep(0.05)
+    servo_output.angle = 10
+    time.sleep (1)
     #turn off output servo (1)
     pwm_output.duty_cycle = 0
     ledGreen.value = False
@@ -154,11 +152,8 @@ while True:
 
     pwm_input.duty_cycle = 2**15
     time.sleep(0.1)
-    for angle in range(0, 180, 5):
-        ledGreen.value = True
-        servo_input.angle = angle
-        time.sleep(0.05)
-    #turn off input (3)
+    servo_input.angle = 45
+    time.sleep (1)
     pwm_input.duty_cycle = 0
     ledGreen.value = False
 
@@ -171,11 +166,8 @@ while True:
 
     pwm_input.duty_cycle = 2**15
     time.sleep(0.1)
-    for angle in range(180, 0, -5):
-        ledGreen.value = True
-        servo_input.angle = angle
-        time.sleep(0.05)
-    #turn off input (4)
+    servo_input.angle = 0
+    time.sleep (1)
     pwm_input.duty_cycle = 0
     ledGreen.value = False
 
@@ -192,11 +184,8 @@ while True:
     pwm_output.duty_cycle = 2**15
     time.sleep(0.1)
 
-    for angle in range(180, 0, -5):
-        ledGreen.value = True
-        servo_output.angle = angle
-        time.sleep(0.05)
-    #turn off output (2)
+    servo_output.angle = 110
+    time.sleep (1)
     pwm_output.duty_cycle = 0
     ledGreen.value = False
 
@@ -209,3 +198,5 @@ while True:
     # Wait 5 seconds and turn green LED off
     time.sleep(5)
     ledGreen.value = False
+
+    time.sleep (30)
