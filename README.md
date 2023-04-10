@@ -3,7 +3,7 @@
 This repository contains code for Team 0101A, working on the *Making Healthcare Accessible* opportunity for ESC204, Winter 2023.
 
 ## Code Organization
-Code it split into the three folders, representative of the three aspects of the design:
+Code it split into the three folders, representative of the three subsystems of the design that require software:
 1. Slide Preparation
 2. Slide Movement
 3. Slide Analysis
