@@ -1,4 +1,3 @@
-import pandas as pd
 import csv
 
 oldname = "/home/awu/STAT-453-Malaria-Bounding-Boxes-Detection-master/Data/train/train_df_old.csv"
@@ -19,4 +18,9 @@ with open(newname, 'w') as file:
     writer = csv.writer(file, lineterminator = '\n')
     for row in file_list:
         writer.writerow(row)
+        
+with open(newname, "r+") as file:
+     existing=file.read()
+     file.seek(0)
+     fp.write("path,category,x1,x2,y1,y2"+existing)
 
