@@ -1,3 +1,4 @@
+# this file was used to convert Windows directory syntax to Unix directory syntax
 import csv
 
 oldname = "/home/awu/ML/Praxis-III/slide_analysis/data/train/train_df_old.csv"
